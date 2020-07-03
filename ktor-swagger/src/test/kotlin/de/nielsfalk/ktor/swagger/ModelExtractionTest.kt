@@ -15,6 +15,7 @@ import de.nielsfalk.ktor.swagger.version.v3.Parameter as ParameterV3
 class ModelExtractionTest {
     companion object {
         const val annotationDescription = "This field has a default"
+        const val annotationExample = "This field has an example"
     }
 
     private val variation = SwaggerSupport.swaggerVariation
@@ -345,6 +346,7 @@ class ModelExtractionTest {
         val mandatory: String,
         @DefaultValue("true")
         @Description(annotationDescription)
+        @Example(annotationExample)
         val default: Boolean = true
     )
 
@@ -369,6 +371,7 @@ class ModelExtractionTest {
             required.should.equal(false)
             type.should.equal("boolean")
             description.should.equal(annotationDescription)
+            example.should.equal(annotationExample)
         }
     }
 
@@ -393,6 +396,7 @@ class ModelExtractionTest {
             required.should.equal(false)
             schema.type.should.equal("boolean")
             description.should.equal(annotationDescription)
+            example.should.equal(annotationExample)
         }
     }
 

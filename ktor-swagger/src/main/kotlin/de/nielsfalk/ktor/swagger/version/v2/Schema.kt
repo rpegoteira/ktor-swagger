@@ -20,7 +20,6 @@ import de.nielsfalk.ktor.swagger.version.shared.Paths
 import de.nielsfalk.ktor.swagger.version.shared.Property
 import de.nielsfalk.ktor.swagger.version.shared.ResponseBase
 import de.nielsfalk.ktor.swagger.version.shared.ResponseCreator
-import de.nielsfalk.ktor.swagger.version.shared.Tag
 import de.nielsfalk.ktor.swagger.version.v3.Example
 import io.ktor.client.call.TypeInfo
 import io.ktor.http.HttpStatusCode
@@ -94,7 +93,7 @@ class Response(
 class Operation(
     override val responses: Map<HttpStatus, ResponseBase>,
     override val parameters: List<ParameterBase>,
-    override val tags: List<Tag>?,
+    override val tags: List<String>?,
     override val summary: String,
     override val description: String?,
     override val security: List<Map<String, List<String>>>?,
@@ -106,7 +105,7 @@ class Operation(
         override fun create(
             responses: Map<HttpStatus, ResponseBase>,
             parameters: List<ParameterBase>,
-            tags: List<Tag>?,
+            tags: List<String>?,
             summary: String,
             description: String?,
             examples: Map<String, Example>,
@@ -138,6 +137,7 @@ class Parameter(
     override val description: String?,
     override val required: Boolean,
     val type: String? = null,
+    val example: Any? = null,
     val format: String? = null,
     val enum: List<String>? = null,
     val items: Property? = null,
@@ -153,6 +153,7 @@ class Parameter(
             description: String?,
             required: Boolean,
             default: String?,
+            example: Any?,
             examples: Map<String, Example>
         ): Parameter {
             return Parameter(
@@ -165,7 +166,8 @@ class Parameter(
                 enum = property.enum,
                 items = property.items,
                 default = default,
-                schema = property.`$ref`?.let { ModelOrModelReference(it) }
+                schema = property.`$ref`?.let { ModelOrModelReference(it) },
+                example = example
             )
         }
     }

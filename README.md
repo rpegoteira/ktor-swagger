@@ -1,7 +1,6 @@
 # [ktor](https://github.com/Kotlin/ktor) with [swaggerUi](https://swagger.io/)
 
-[![Build Status](https://travis-ci.com/nielsfalk/ktor-swagger.svg?branch=master)](https://travis-ci.com/nielsfalk/ktor-swagger)
-[![](https://jitpack.io/v/nielsfalk/ktor-swagger.svg)](https://jitpack.io/#nielsfalk/ktor-swagger)
+[![](https://jitpack.io/v/rpegoteira/ktor-swagger.svg)](https://jitpack.io/#rpegoteira/ktor-swagger)
 
 
 This project provides a library that allows you you to integrate the

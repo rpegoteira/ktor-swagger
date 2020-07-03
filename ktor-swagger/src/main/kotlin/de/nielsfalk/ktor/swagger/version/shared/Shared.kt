@@ -40,7 +40,7 @@ class Contact(
 interface OperationBase {
     val responses: Map<HttpStatus, ResponseBase>
     val parameters: List<ParameterBase>
-    val tags: List<Tag>?
+    val tags: List<String>?
     val summary: String
     val description: String?
     val security: List<Map<String, List<String>>>?
@@ -58,7 +58,7 @@ interface OperationCreator {
         examples: Map<String, Example>,
         operationId: String?
     ): OperationBase {
-        val tags = group?.toList()
+        val tags = group?.toList()?.map { it.name }?.toList()
         val summary = metadata.summary ?: "${method.value} ${location.path}"
         return create(
             responses,
@@ -75,7 +75,7 @@ interface OperationCreator {
     fun create(
         responses: Map<HttpStatus, ResponseBase>,
         parameters: List<ParameterBase>,
-        tags: List<Tag>?,
+        tags: List<String>?,
         summary: String,
         description: String?,
         examples: Map<String, Example>,
@@ -117,6 +117,7 @@ interface ParameterCreator {
         description: String? = property.description ?: name,
         required: Boolean = true,
         default: String? = null,
+        example: Any? = null,
         examples: Map<String, Example> = emptyMap()
     ): ParameterBase
 }

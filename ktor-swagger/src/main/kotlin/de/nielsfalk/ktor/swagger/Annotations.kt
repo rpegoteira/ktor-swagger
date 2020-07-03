@@ -11,4 +11,9 @@ annotation class Description(
 )
 
 @Target(AnnotationTarget.PROPERTY)
+annotation class Example(
+    val example: String
+)
+
+@Target(AnnotationTarget.PROPERTY)
 annotation class Ignore

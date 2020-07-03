@@ -19,7 +19,6 @@ import de.nielsfalk.ktor.swagger.version.shared.Paths
 import de.nielsfalk.ktor.swagger.version.shared.Property
 import de.nielsfalk.ktor.swagger.version.shared.ResponseBase
 import de.nielsfalk.ktor.swagger.version.shared.ResponseCreator
-import de.nielsfalk.ktor.swagger.version.shared.Tag
 import io.ktor.client.call.TypeInfo
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
@@ -102,11 +101,10 @@ class Response(
         private fun createContent(jsonResponseSchema: JsonResponseSchema) =
             jsonResponseSchema.run {
                 "application/json" to
-                    MediaTypeObject(
-                        ModelOrModelReference.create("#/components/schemas/" + name),
-                        example = examples.values.firstOrNull()?.value,
-                        examples = examples
-                    )
+                        MediaTypeObject(
+                            ModelOrModelReference.create("#/components/schemas/" + name),
+                            examples = examples
+                        )
             }
 
         private fun createContent(jsonResponseFromReflection: JsonResponseFromReflection) =
@@ -117,7 +115,6 @@ class Response(
                 jsonContent?.let {
                     "application/json" to MediaTypeObject(
                         it,
-                        example = examples.values.firstOrNull()?.value,
                         examples = examples
                     )
                 }
@@ -155,7 +152,6 @@ class Response(
                 mapOf(
                     "application/json" to MediaTypeObject(
                         it,
-                        example = examples.values.firstOrNull()?.value,
                         examples = examples
                     )
                 )
@@ -174,11 +170,10 @@ class Response(
                 description = modelName,
                 content = mapOf(
                     "application/json" to
-                        MediaTypeObject(
-                            ModelOrModelReference.create("#/components/schemas/" + modelName),
-                            example = examples.values.firstOrNull()?.value,
-                            examples = examples
-                        )
+                            MediaTypeObject(
+                                ModelOrModelReference.create("#/components/schemas/" + modelName),
+                                examples = examples
+                            )
                 )
             )
         }
@@ -187,14 +182,13 @@ class Response(
 
 class MediaTypeObject(
     val schema: ModelOrModelReference,
-    val example: Any? = null,
     val examples: Map<String, Example> = mapOf()
 )
 
 class Operation(
     override val responses: Map<HttpStatus, ResponseBase>,
     override val parameters: List<Parameter>,
-    override val tags: List<Tag>?,
+    override val tags: List<String>?,
     override val summary: String,
     override val description: String?,
     override val security: List<Map<String, List<String>>>?,
@@ -206,7 +200,7 @@ class Operation(
         override fun create(
             responses: Map<HttpStatus, ResponseBase>,
             parameters: List<ParameterBase>,
-            tags: List<Tag>?,
+            tags: List<String>?,
             summary: String,
             description: String?,
             examples: Map<String, Example>,
@@ -228,20 +222,18 @@ class Operation(
             val requestBody: RequestBody? =
                 bodyParams.firstOrNull()?.let {
                     val content = if (it.schema.type == "string") mapOf(
-                            "text/plain" to MediaTypeObject(
-                                    ModelOrModelReference(
-                                            type = "string"
-                                    ),
-                                    example = examples.values.firstOrNull()?.value,
-                                    examples = examples
-                            )
+                        "text/plain" to MediaTypeObject(
+                            ModelOrModelReference(
+                                type = "string"
+                            ),
+                            examples = examples
+                        )
                     )
                     else mapOf(
                         "application/json" to MediaTypeObject(
                             ModelOrModelReference(
                                 `$ref` = it.schema.`$ref`!!
                             ),
-                            example = examples.values.firstOrNull()?.value,
                             examples = examples
                         )
                     )
@@ -283,6 +275,7 @@ class Parameter(
             description: String?,
             required: Boolean,
             default: String?,
+            example: Any?,
             examples: Map<String, Example>
         ): ParameterBase {
             return Parameter(
@@ -291,7 +284,8 @@ class Parameter(
                 description = description,
                 required = required,
                 schema = property.copy(default = default),
-                examples = examples
+                examples = examples,
+                example = example
             )
         }
     }
