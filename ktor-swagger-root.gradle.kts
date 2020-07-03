@@ -31,7 +31,7 @@ allprojects {
     apply {
         plugin("com.diffplug.gradle.spotless")
     }
-    group = "de.nielsfalk.ktor"
+    group = "ukes.rpegoteira.ktor"
     version = "0.7.1"
 
     repositories {
