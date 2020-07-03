@@ -32,7 +32,7 @@ allprojects {
         plugin("com.diffplug.gradle.spotless")
     }
     group = "ukes.rpegoteira.ktor"
-    version = "0.7.1"
+    version = "0.8.1"
 
     repositories {
         mavenCentral()
