@@ -65,6 +65,7 @@ internal class SpecVariation(
         val schemaAnnotation = annotations.firstOrNull { it is Schema } as? Schema
         val required = !annotations.any { it is DefaultValue } && !returnType.isMarkedNullable
         val defaultValue = annotations.firstOrNull { it is DefaultValue } as? DefaultValue
+        val example = annotations.firstOrNull { it is Example } as? Example
         fun Property.determineDescription() =
             annotations.mapNotNull { it as? Description }.firstOrNull()?.description ?: description ?: name
         return if (schemaAnnotation != null) {
@@ -77,7 +78,8 @@ internal class SpecVariation(
                 inputType,
                 description = property.determineDescription(),
                 required = required,
-                default = defaultValue?.value
+                default = defaultValue?.value,
+                example = example?.example
             ) to emptyTypeInfoList
         } else {
             toModelProperty().let {
@@ -87,7 +89,8 @@ internal class SpecVariation(
                     inputType,
                     it.first.determineDescription(),
                     required = required,
-                    default = defaultValue?.value
+                    default = defaultValue?.value,
+                    example = example?.example
                 ) to it.second
             }
         }

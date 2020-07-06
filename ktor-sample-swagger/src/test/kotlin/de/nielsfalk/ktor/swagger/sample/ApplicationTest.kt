@@ -7,7 +7,7 @@ import java.util.concurrent.TimeUnit
 class ApplicationTest {
 
     @Test
-    fun `start and then imidiately shutdown`() {
+    fun `start and then immediately shutdown`() {
         run(8090, wait = false).stop(
             gracePeriod = TimeUnit.SECONDS.toMillis(5),
             timeout = TimeUnit.SECONDS.toMillis(5),

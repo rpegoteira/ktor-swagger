@@ -104,7 +104,6 @@ class Response(
                 "application/json" to
                     MediaTypeObject(
                         ModelOrModelReference.create("#/components/schemas/" + name),
-                        example = examples.values.firstOrNull()?.value,
                         examples = examples
                     )
             }
@@ -117,7 +116,6 @@ class Response(
                 jsonContent?.let {
                     "application/json" to MediaTypeObject(
                         it,
-                        example = examples.values.firstOrNull()?.value,
                         examples = examples
                     )
                 }
@@ -155,7 +153,6 @@ class Response(
                 mapOf(
                     "application/json" to MediaTypeObject(
                         it,
-                        example = examples.values.firstOrNull()?.value,
                         examples = examples
                     )
                 )
@@ -176,7 +173,6 @@ class Response(
                     "application/json" to
                         MediaTypeObject(
                             ModelOrModelReference.create("#/components/schemas/" + modelName),
-                            example = examples.values.firstOrNull()?.value,
                             examples = examples
                         )
                 )
@@ -187,14 +183,13 @@ class Response(
 
 class MediaTypeObject(
     val schema: ModelOrModelReference,
-    val example: Any? = null,
     val examples: Map<String, Example> = mapOf()
 )
 
 class Operation(
     override val responses: Map<HttpStatus, ResponseBase>,
     override val parameters: List<Parameter>,
-    override val tags: List<Tag>?,
+    override val tags: List<String>?,
     override val summary: String,
     override val description: String?,
     override val security: List<Map<String, List<String>>>?,
@@ -206,7 +201,7 @@ class Operation(
         override fun create(
             responses: Map<HttpStatus, ResponseBase>,
             parameters: List<ParameterBase>,
-            tags: List<Tag>?,
+            tags: List<String>?,
             summary: String,
             description: String?,
             examples: Map<String, Example>,
@@ -232,7 +227,6 @@ class Operation(
                                     ModelOrModelReference(
                                             type = "string"
                                     ),
-                                    example = examples.values.firstOrNull()?.value,
                                     examples = examples
                             )
                     )
@@ -241,7 +235,6 @@ class Operation(
                             ModelOrModelReference(
                                 `$ref` = it.schema.`$ref`!!
                             ),
-                            example = examples.values.firstOrNull()?.value,
                             examples = examples
                         )
                     )
@@ -283,6 +276,7 @@ class Parameter(
             description: String?,
             required: Boolean,
             default: String?,
+            example: Any?,
             examples: Map<String, Example>
         ): ParameterBase {
             return Parameter(
@@ -291,7 +285,8 @@ class Parameter(
                 description = description,
                 required = required,
                 schema = property.copy(default = default),
-                examples = examples
+                examples = examples,
+                example = example
             )
         }
     }
