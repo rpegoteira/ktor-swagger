@@ -166,7 +166,7 @@ class Parameter(
                 enum = property.enum,
                 items = property.items,
                 default = default,
-                schema = property.`$ref`?.let { ModelOrModelReference(it)},
+                schema = property.`$ref`?.let { ModelOrModelReference(it) },
                 example = example
             )
         }

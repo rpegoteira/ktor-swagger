@@ -19,7 +19,6 @@ import de.nielsfalk.ktor.swagger.version.shared.Paths
 import de.nielsfalk.ktor.swagger.version.shared.Property
 import de.nielsfalk.ktor.swagger.version.shared.ResponseBase
 import de.nielsfalk.ktor.swagger.version.shared.ResponseCreator
-import de.nielsfalk.ktor.swagger.version.shared.Tag
 import io.ktor.client.call.TypeInfo
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
@@ -102,10 +101,10 @@ class Response(
         private fun createContent(jsonResponseSchema: JsonResponseSchema) =
             jsonResponseSchema.run {
                 "application/json" to
-                    MediaTypeObject(
-                        ModelOrModelReference.create("#/components/schemas/" + name),
-                        examples = examples
-                    )
+                        MediaTypeObject(
+                            ModelOrModelReference.create("#/components/schemas/" + name),
+                            examples = examples
+                        )
             }
 
         private fun createContent(jsonResponseFromReflection: JsonResponseFromReflection) =
@@ -171,10 +170,10 @@ class Response(
                 description = modelName,
                 content = mapOf(
                     "application/json" to
-                        MediaTypeObject(
-                            ModelOrModelReference.create("#/components/schemas/" + modelName),
-                            examples = examples
-                        )
+                            MediaTypeObject(
+                                ModelOrModelReference.create("#/components/schemas/" + modelName),
+                                examples = examples
+                            )
                 )
             )
         }
@@ -223,12 +222,12 @@ class Operation(
             val requestBody: RequestBody? =
                 bodyParams.firstOrNull()?.let {
                     val content = if (it.schema.type == "string") mapOf(
-                            "text/plain" to MediaTypeObject(
-                                    ModelOrModelReference(
-                                            type = "string"
-                                    ),
-                                    examples = examples
-                            )
+                        "text/plain" to MediaTypeObject(
+                            ModelOrModelReference(
+                                type = "string"
+                            ),
+                            examples = examples
+                        )
                     )
                     else mapOf(
                         "application/json" to MediaTypeObject(
