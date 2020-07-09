@@ -1,6 +1,11 @@
 package de.nielsfalk.ktor.swagger
 
-import de.nielsfalk.ktor.swagger.version.shared.*
+import de.nielsfalk.ktor.swagger.version.shared.CommonBase
+import de.nielsfalk.ktor.swagger.version.shared.Group
+import de.nielsfalk.ktor.swagger.version.shared.ModelName
+import de.nielsfalk.ktor.swagger.version.shared.OperationBase
+import de.nielsfalk.ktor.swagger.version.shared.ParameterBase
+import de.nielsfalk.ktor.swagger.version.shared.ParameterInputType
 import de.nielsfalk.ktor.swagger.version.v2.Swagger
 import de.nielsfalk.ktor.swagger.version.v3.OpenApi
 import io.ktor.application.Application
@@ -59,26 +64,26 @@ class SwaggerSupport(
                 else -> throw IllegalArgumentException("Swagger or OpenApi must be specified")
             }
             pipeline.routing {
-                    get("/$path") {
+                get("/$path") {
+                    redirect(path, defaultJsonFile)
+                }
+                val ui = if (provideUi) SwaggerUi() else null
+                get("/$path/{fileName}") {
+                    val filename = call.parameters["fileName"]
+                    if (filename == swaggerJsonFileName && swagger != null) {
+                        call.respond(swagger)
+
+                    } else if (filename == openApiFile && openApi != null) {
+                        call.respond(openApi)
+                    } else {
+                        ui?.serve(filename, call)
+                    }
+                }
+                if (forwardRoot) {
+                    get("/") {
                         redirect(path, defaultJsonFile)
                     }
-                    val ui = if (provideUi) SwaggerUi() else null
-                    get("/$path/{fileName}") {
-                        val filename = call.parameters["fileName"]
-                        if (filename == swaggerJsonFileName && swagger != null) {
-                            call.respond(swagger)
-
-                        } else if (filename == openApiFile && openApi != null) {
-                            call.respond(openApi)
-                        } else {
-                            ui?.serve(filename, call)
-                        }
-                    }
-                    if (forwardRoot) {
-                        get("/") {
-                            redirect(path, defaultJsonFile)
-                        }
-                    }
+                }
 
             }
             return feature
@@ -264,8 +269,8 @@ private abstract class BaseWithVariation<B : CommonBase>(
     private fun Metadata.createBodyType(typeInfo: TypeInfo): BodyType = when {
         bodySchema != null -> {
             BodyFromSchema(
-                    name = bodySchema.name ?: typeInfo.modelName(),
-                    examples = bodyExamples
+                name = bodySchema.name ?: typeInfo.modelName(),
+                examples = bodyExamples
             )
         }
         typeInfo.type == String::class -> BodyFromString(bodyExamples)

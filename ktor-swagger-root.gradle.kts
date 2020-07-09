@@ -64,7 +64,7 @@ subprojects {
 
     spotless {
         kotlin {
-            ktlint(Versions.KTLINT)
+//            ktlint(Versions.KTLINT)
             trimTrailingWhitespace()
             endWithNewline()
         }
