@@ -1,11 +1,6 @@
 package de.nielsfalk.ktor.swagger
 
-import de.nielsfalk.ktor.swagger.version.shared.CommonBase
-import de.nielsfalk.ktor.swagger.version.shared.Group
-import de.nielsfalk.ktor.swagger.version.shared.ModelName
-import de.nielsfalk.ktor.swagger.version.shared.OperationBase
-import de.nielsfalk.ktor.swagger.version.shared.ParameterBase
-import de.nielsfalk.ktor.swagger.version.shared.ParameterInputType
+import de.nielsfalk.ktor.swagger.version.shared.*
 import de.nielsfalk.ktor.swagger.version.v2.Swagger
 import de.nielsfalk.ktor.swagger.version.v3.OpenApi
 import io.ktor.application.Application
@@ -39,7 +34,6 @@ class SwaggerSupport(
     val openApiCustomization: Metadata.(HttpMethod) -> Metadata
 ) {
     companion object Feature : ApplicationFeature<Application, SwaggerUiConfiguration, SwaggerSupport> {
-        private val openApiJsonFileName = "openapi.json"
         private val swaggerJsonFileName = "swagger.json"
 
         internal val swaggerVariation = SpecVariation("#/definitions/", ResponseV2, OperationV2, ParameterV2)
@@ -49,6 +43,7 @@ class SwaggerSupport(
 
         override fun install(pipeline: Application, configure: SwaggerUiConfiguration.() -> Unit): SwaggerSupport {
             val (path,
+                openApiFile,
                 forwardRoot,
                 provideUi,
                 swagger,
@@ -59,31 +54,32 @@ class SwaggerSupport(
             val feature = SwaggerSupport(swagger, swaggerConfig, openApi, openpapiConfig)
 
             val defaultJsonFile = when {
-                openApi != null -> openApiJsonFileName
+                openApi != null -> openApiFile
                 swagger != null -> swaggerJsonFileName
                 else -> throw IllegalArgumentException("Swagger or OpenApi must be specified")
             }
             pipeline.routing {
-                get("/$path") {
-                    redirect(path, defaultJsonFile)
-                }
-                val ui = if (provideUi) SwaggerUi() else null
-                get("/$path/{fileName}") {
-                    val filename = call.parameters["fileName"]
-                    if (filename == swaggerJsonFileName && swagger != null) {
-                        call.respond(swagger)
-                    } else if (filename == openApiJsonFileName && openApi != null) {
-                        call.respond(openApi)
-                    } else {
-                        ui?.serve(filename, call)
-                    }
-                }
-                if (forwardRoot) {
-
-                    get("/") {
+                    get("/$path") {
                         redirect(path, defaultJsonFile)
                     }
-                }
+                    val ui = if (provideUi) SwaggerUi() else null
+                    get("/$path/{fileName}") {
+                        val filename = call.parameters["fileName"]
+                        if (filename == swaggerJsonFileName && swagger != null) {
+                            call.respond(swagger)
+
+                        } else if (filename == openApiFile && openApi != null) {
+                            call.respond(openApi)
+                        } else {
+                            ui?.serve(filename, call)
+                        }
+                    }
+                    if (forwardRoot) {
+                        get("/") {
+                            redirect(path, defaultJsonFile)
+                        }
+                    }
+
             }
             return feature
         }
@@ -301,6 +297,7 @@ private abstract class BaseWithVariation<B : CommonBase>(
 
 data class SwaggerUiConfiguration(
     var path: String = "apidocs",
+    var fileName: String = "openapi.json",
     var forwardRoot: Boolean = false,
     var provideUi: Boolean = true,
     var swagger: Swagger? = null,

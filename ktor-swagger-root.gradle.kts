@@ -32,7 +32,7 @@ allprojects {
         plugin("com.diffplug.gradle.spotless")
     }
     group = "de.nielsfalk.ktor"
-    version = "0.9.1"
+    version = "0.9.2"
 
     repositories {
         mavenCentral()
