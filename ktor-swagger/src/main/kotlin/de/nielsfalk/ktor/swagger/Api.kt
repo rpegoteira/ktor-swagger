@@ -9,9 +9,12 @@ import io.ktor.client.call.typeInfo
 import io.ktor.http.ContentType
 import io.ktor.http.HttpMethod
 import io.ktor.http.HttpStatusCode
+import io.ktor.http.HttpStatusCode.Companion.Accepted
+import io.ktor.http.HttpStatusCode.Companion.BadGateway
 import io.ktor.http.HttpStatusCode.Companion.BadRequest
 import io.ktor.http.HttpStatusCode.Companion.Created
 import io.ktor.http.HttpStatusCode.Companion.Forbidden
+import io.ktor.http.HttpStatusCode.Companion.GatewayTimeout
 import io.ktor.http.HttpStatusCode.Companion.InternalServerError
 import io.ktor.http.HttpStatusCode.Companion.NoContent
 import io.ktor.http.HttpStatusCode.Companion.NotFound
@@ -282,6 +285,33 @@ fun resetContent(name: String, vararg examples: Pair<String, Example> = arrayOf(
 
 fun resetContent(vararg responses: ResponseType = arrayOf(), description: String? = null): HttpCodeResponse =
     HttpStatusCode.ResetContent(*responses, description = description)
+
+inline fun <reified T> badGateway(vararg examples: Pair<String, Example> = arrayOf()): HttpCodeResponse =
+    badGateway(json<T>(*examples))
+
+fun badGateway(name: String, vararg examples: Pair<String, Example> = arrayOf()): HttpCodeResponse =
+    badGateway(json(name, *examples))
+
+fun badGateway(vararg responses: ResponseType = arrayOf(), description: String? = null): HttpCodeResponse =
+    HttpCodeResponse(BadGateway, listOf(*responses), description)
+
+inline fun <reified T> accepted(vararg examples: Pair<String, Example> = arrayOf()): HttpCodeResponse =
+    accepted(json<T>(*examples))
+
+fun accepted(name: String, vararg examples: Pair<String, Example> = arrayOf()): HttpCodeResponse =
+    accepted(json(name, *examples))
+
+fun accepted(vararg responses: ResponseType = arrayOf(), description: String? = null): HttpCodeResponse =
+    HttpCodeResponse(Accepted, listOf(*responses), description)
+
+inline fun <reified T> gatewayTimeout(vararg examples: Pair<String, Example> = arrayOf()): HttpCodeResponse =
+    gatewayTimeout(json<T>(*examples))
+
+fun gatewayTimeout(name: String, vararg examples: Pair<String, Example> = arrayOf()): HttpCodeResponse =
+    gatewayTimeout(json(name, *examples))
+
+fun gatewayTimeout(vararg responses: ResponseType = arrayOf(), description: String? = null): HttpCodeResponse =
+    HttpCodeResponse(GatewayTimeout, listOf(*responses), description)
 
 operator fun HttpStatusCode.invoke(name: String, vararg examples: Pair<String, Example> = arrayOf()): HttpCodeResponse =
     this(json(name, *examples))
